@@ -92,7 +92,10 @@ if [ -e $INTEL_OPENVINO_DIR/deployment_tools/open_model_zoo/tools/accuracy_check
 fi
 
 if [ -z "$python_version" ]; then
-    if command -v python3.7 >/dev/null 2>&1; then
+    if command -v python3.8 >/dev/null 2>&1; then
+        python_version=3.8
+        python_bitness=$(python3.8 -c 'import sys; print(64 if sys.maxsize > 2**32 else 32)')
+    elif command -v python3.7 >/dev/null 2>&1; then
         python_version=3.7
         python_bitness=$(python3.7 -c 'import sys; print(64 if sys.maxsize > 2**32 else 32)')
     elif command -v python3.6 >/dev/null 2>&1; then
@@ -121,10 +124,6 @@ if [ "$python_bitness" != "" ] && [ "$python_bitness" != "64" ] && [ "$OS_NAME" 
 fi
 
 if [ ! -z "$python_version" ]; then
-    if [ "$python_version" != "2.7" ]; then
-        # add path to OpenCV API for Python 3.x
-        export PYTHONPATH="$INTEL_OPENVINO_DIR/python/python3:$PYTHONPATH"
-    fi
     # add path to Inference Engine Python API
     export PYTHONPATH="$INTEL_OPENVINO_DIR/python/python$python_version:$PYTHONPATH"
 fi

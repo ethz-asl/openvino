@@ -56,12 +56,19 @@ void profilerRtcStart(intel_gna_profiler_rtc *p) {
     if (nullptr == p) return;
     clearTimeB(p->passed);
     clearTimeB(p->stop);
-    ftime(&p->start);
+    timespec start;
+    clock_gettime(CLOCK_REALTIME, &start);
+    p->start.time = start.tv_sec;
+    p->start.millitm = start.tv_nsec/1000000;
+
 }
 
 void profilerRtcStop(intel_gna_profiler_rtc *p) {
     if (nullptr == p) return;
-    ftime(&p->stop);
+    timespec stop;
+    clock_gettime(CLOCK_REALTIME, &stop);
+    p->stop.time = stop.tv_sec;
+    p->stop.millitm = stop.tv_nsec/1000000;
     /*if ((p->stop.tv_nsec - p->start.tv_nsec)<0) {
         p->passed.tv_sec = p->stop.tv_sec - p->start.tv_sec - 1;
         p->passed.tv_nsec = 1000000000 + p->stop.tv_nsec - p->start.tv_nsec;
